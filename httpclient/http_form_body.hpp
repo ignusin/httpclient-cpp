@@ -18,6 +18,8 @@ namespace httpclient
 
     public:
         void append(const std::string &key, const std::string &value);
+
+        chunked_buffer to_buffer() const;
     };
 }
 
