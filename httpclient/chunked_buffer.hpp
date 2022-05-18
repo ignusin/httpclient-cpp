@@ -39,7 +39,7 @@ namespace httpclient
 
         chunked_buffer& operator=(chunked_buffer &&other);
 
-        void append(const chunk &chunk);
+        void append(chunk &&chunk);
 
         std::list<chunk>::const_iterator begin() const;
         std::list<chunk>::const_iterator end() const;
