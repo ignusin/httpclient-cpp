@@ -2,6 +2,7 @@
 #include <httpclient/curl/httpclient_curl.hpp>
 
 #include <iostream>
+#include <system_error>
 
 namespace hc = httpclient;
 
@@ -9,6 +10,15 @@ int main()
 {
     hc::curl::httpclient_curl_initializer curl_initializer;
 
+    hc::http_form_body form_body;
+    form_body.append("field1", "value1");
+    form_body.append("field2", "value2");
+
+    hc::http_request<hc::http_form_body> request{hc::http_post, "https://httpbin.org/post"};
+    
+    auto resp = hc::http_perform<hc::http_form_body, hc::http_string_body>(request);
+
+    /*
     hc::curl::httpclient_curl_handle curl;
     if (!curl)
     {
@@ -24,4 +34,5 @@ int main()
     {
         std::cout << "Error while sending request" << std::endl;
     }
+    */
 }

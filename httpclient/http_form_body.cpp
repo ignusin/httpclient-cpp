@@ -11,29 +11,12 @@ void hc::http_form_body::append(const std::string &key, const std::string &value
     _values.push_back(hc::http_key_value{key, value});
 }
 
-hc::chunked_buffer hc::http_form_body::to_buffer() const
+std::list<hc::http_key_value>::const_iterator hc::http_form_body::values_begin() const
 {
-    std::ostringstream os;
-    bool has_first = false;
-
-    for (const auto &pair : _values)
-    {
-        if (has_first)
-        {
-            os << "&";
-        }
-
-        os << hc::http_url_encode(pair.first) << "=" << hc::http_url_encode(pair.second);
-        has_first = true;
-    }
-
-    std::string s = os.str();
-    unsigned int size = s.size();
-
-    hc::chunked_buffer result;
-    result.append(hc::chunked_buffer::chunk(reinterpret_cast<const uint8_t *>(s.c_str()), size));
-
-    return result;
+    return _values.begin();
 }
 
-
+std::list<hc::http_key_value>::const_iterator hc::http_form_body::values_end() const
+{
+    return _values.end();
+}

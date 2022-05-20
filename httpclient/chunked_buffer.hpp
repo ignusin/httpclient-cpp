@@ -26,6 +26,7 @@ namespace httpclient
             unsigned int size() const;
 
         private:
+            chunk() = delete;
             chunk(const chunk &other) = delete;
             chunk& operator=(const chunk &other) = delete;
         };

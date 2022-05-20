@@ -5,13 +5,13 @@
 #include <string>
 #include <utility>
 
-#include "http_body.hpp"
+#include "chunked_buffer.hpp"
 
 namespace httpclient
 {
     using http_key_value = std::pair<std::string, std::string>;
 
-    class http_form_body : public http_body
+    class http_form_body
     {
     private:
         std::list<http_key_value> _values;
@@ -19,7 +19,8 @@ namespace httpclient
     public:
         void append(const std::string &key, const std::string &value);
 
-        chunked_buffer to_buffer() const;
+        std::list<http_key_value>::const_iterator values_begin() const;
+        std::list<http_key_value>::const_iterator values_end() const;
     };
 }
 

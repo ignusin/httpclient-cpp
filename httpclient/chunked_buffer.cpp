@@ -1,5 +1,6 @@
 #include "chunked_buffer.hpp"
 #include <memory>
+#include <iostream>
 
 namespace hc = httpclient;
 
@@ -20,7 +21,7 @@ hc::chunked_buffer& hc::chunked_buffer::operator=(hc::chunked_buffer &&other)
 
 void hc::chunked_buffer::append(hc::chunked_buffer::chunk &&chunk)
 {
-    _chunks.emplace_back(chunk);
+    _chunks.push_back(std::move(chunk));
 }
 
 std::list<hc::chunked_buffer::chunk>::const_iterator hc::chunked_buffer::begin() const
@@ -41,7 +42,7 @@ hc::chunked_buffer::chunk::chunk(const std::uint8_t *data, unsigned int size)
     _size = size;
 }
 
-hc::chunked_buffer::chunk::chunk(chunk &&other)
+hc::chunked_buffer::chunk::chunk(chunk &&other) : _data(new uint8_t[0]), _size(0)
 {
     *this = std::move(other);
 }
