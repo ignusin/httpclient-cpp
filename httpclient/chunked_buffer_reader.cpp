@@ -62,7 +62,7 @@ unsigned int hc::chunked_buffer_reader::read(
             }
         }
 
-        read_count = copy_count;
+        read_count += copy_count;
     }
 
     return read_count;

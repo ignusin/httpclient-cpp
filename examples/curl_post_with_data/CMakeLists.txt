@@ -12,6 +12,8 @@ link_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/httpclient_curl
     ${CMAKE_CURRENT_BINARY_DIR}/httpclient)
 
+add_compile_options(-g)
+
 add_executable(examples_curl_post_with_data
     main.cpp)
 

@@ -64,8 +64,6 @@ namespace httpclient
 
         inline size_t __curl_write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
         {
-            // TODO: logs here.
-
             chunked_buffer &buffer = *static_cast<chunked_buffer*>(userdata);
             buffer.append(chunked_buffer::chunk(reinterpret_cast<uint8_t *>(ptr), size * nmemb));
 
@@ -94,6 +92,8 @@ namespace httpclient
             {
                 __http_curl_request_write_body(handle, request, reader);
             }
+
+            handle.setopt(CURLOPT_HEADER, 1L);
 
             chunked_buffer response_buffer;
             __http_curl_response_read_body(handle, response_buffer);

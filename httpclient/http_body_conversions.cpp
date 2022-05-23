@@ -47,8 +47,8 @@ hc::http_string_body hc::make_body<hc::http_string_body>(const chunked_buffer &b
     unsigned int read_count = reader.read(bytes, sizeof(bytes));
     while (read_count > 0)
     {
-        read_count = reader.read(bytes, sizeof(bytes));
         str.append(reinterpret_cast<char *>(bytes), read_count);
+        read_count = reader.read(bytes, sizeof(bytes));
     }
 
     return hc::http_string_body{std::move(str)};
