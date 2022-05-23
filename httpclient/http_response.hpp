@@ -10,8 +10,8 @@ namespace httpclient
         t_body _body;
 
     public:
-        http_response(const t_body &body = t_body())
-            : _body(body)
+        http_response(t_body &&body = t_body())
+            : _body(std::move(body))
         {
         }
 

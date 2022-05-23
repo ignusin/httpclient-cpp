@@ -1,6 +1,5 @@
 #include "chunked_buffer.hpp"
 #include <memory>
-#include <iostream>
 
 namespace hc = httpclient;
 

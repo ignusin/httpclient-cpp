@@ -23,8 +23,8 @@ namespace httpclient
         t_body _body;
 
     public:
-        http_request(http_verb verb, const std::string &url, const t_body &body = t_body())
-            : _verb(verb), _url(url), _body(body)
+        http_request(http_verb verb, const std::string &url, t_body &&body = t_body())
+            : _verb(verb), _url(url), _body(std::move(body))
         {
         }
 

@@ -14,9 +14,14 @@ int main()
     form_body.append("field1", "value1");
     form_body.append("field2", "value2");
 
-    hc::http_request<hc::http_form_body> request{hc::http_post, "https://httpbin.org/post"};
+    hc::http_request<hc::http_form_body> request{
+        hc::http_post,
+        "https://httpbin.org/post",
+        std::move(form_body)};
     
     auto resp = hc::http_perform<hc::http_form_body, hc::http_string_body>(request);
+    
+    std::cout << resp.body().content() << std::endl;
 
     /*
     hc::curl::httpclient_curl_handle curl;

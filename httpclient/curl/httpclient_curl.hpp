@@ -62,6 +62,24 @@ namespace httpclient
             __http_curl_request_set_url(handle, request);
         }
 
+        inline size_t __curl_write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
+        {
+            // TODO: logs here.
+
+            chunked_buffer &buffer = *static_cast<chunked_buffer*>(userdata);
+            buffer.append(chunked_buffer::chunk(reinterpret_cast<uint8_t *>(ptr), size * nmemb));
+
+            return size * nmemb;
+        }
+
+        inline void __http_curl_response_read_body(
+            httpclient_curl_handle &handle,
+            chunked_buffer &buffer)
+        {
+            handle.setopt(CURLOPT_WRITEFUNCTION, __curl_write_callback);
+            handle.setopt(CURLOPT_WRITEDATA, &buffer);
+        }
+
         template<typename t_req_body, typename t_resp_body>
         http_response<t_resp_body> http_curl_perform(
             const http_request<t_req_body> &request)
@@ -77,9 +95,12 @@ namespace httpclient
                 __http_curl_request_write_body(handle, request, reader);
             }
 
+            chunked_buffer response_buffer;
+            __http_curl_response_read_body(handle, response_buffer);
+
             curl_easy_perform(*handle);
 
-            return http_response<t_resp_body>();
+            return http_response<t_resp_body>(make_body<t_resp_body>(response_buffer));
         }
     }
 }
