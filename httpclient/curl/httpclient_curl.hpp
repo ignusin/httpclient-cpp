@@ -6,11 +6,20 @@
 #include "../chunked_buffer.hpp"
 #include "../chunked_buffer_reader.hpp"
 #include "../http_body_conversions.hpp"
+#include "../http_request.hpp"
+#include "../http_response.hpp"
 
 namespace httpclient
 {
     namespace curl
     {
+        size_t __curl_read_buffer_callback(char *buffer, size_t size, size_t nitems, void *userdata);
+        size_t __curl_write_buffer_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
+        
+        void __http_curl_request_write_body(httpclient_curl_handle &handle, chunked_buffer_reader &reader);
+        void __http_curl_response_read_header(httpclient_curl_handle &handle, chunked_buffer &buffer);
+        void __http_curl_response_read_body(httpclient_curl_handle &handle, chunked_buffer &buffer);
+
         template<typename t_req_body>
         void __http_curl_request_set_verb(
             httpclient_curl_handle &handle,
@@ -34,25 +43,6 @@ namespace httpclient
             handle.setopt(CURLOPT_URL, request.url().c_str());
         }
 
-        inline size_t __curl_read_callback(
-            char *buffer, size_t size, size_t nitems, void *userdata)
-        {
-            chunked_buffer_reader &reader = *static_cast<chunked_buffer_reader*>(userdata);
-            auto result = reader.read(reinterpret_cast<uint8_t *>(buffer), size * nitems);
-        
-            return result;
-        }
-
-        template<typename t_req_body>
-        void __http_curl_request_write_body(
-            httpclient_curl_handle &handle,
-            const http_request<t_req_body> &request,
-            chunked_buffer_reader &reader)
-        {
-            handle.setopt(CURLOPT_READFUNCTION, __curl_read_callback);
-            handle.setopt(CURLOPT_READDATA, &reader);
-        }
-
         template<typename t_req_body>
         void __http_curl_request_prepare(
             httpclient_curl_handle &handle,
@@ -60,22 +50,6 @@ namespace httpclient
         {
             __http_curl_request_set_verb(handle, request);
             __http_curl_request_set_url(handle, request);
-        }
-
-        inline size_t __curl_write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
-        {
-            chunked_buffer &buffer = *static_cast<chunked_buffer*>(userdata);
-            buffer.append(chunked_buffer::chunk(reinterpret_cast<uint8_t *>(ptr), size * nmemb));
-
-            return size * nmemb;
-        }
-
-        inline void __http_curl_response_read_body(
-            httpclient_curl_handle &handle,
-            chunked_buffer &buffer)
-        {
-            handle.setopt(CURLOPT_WRITEFUNCTION, __curl_write_callback);
-            handle.setopt(CURLOPT_WRITEDATA, &buffer);
         }
 
         template<typename t_req_body, typename t_resp_body>
@@ -90,10 +64,13 @@ namespace httpclient
 
             if (request.verb() == http_post)
             {
-                __http_curl_request_write_body(handle, request, reader);
+                __http_curl_request_write_body(handle, reader);
             }
 
             handle.setopt(CURLOPT_HEADER, 1L);
+
+            chunked_buffer header_buffer;
+            __http_curl_response_read_header(handle, header_buffer);
 
             chunked_buffer response_buffer;
             __http_curl_response_read_body(handle, response_buffer);

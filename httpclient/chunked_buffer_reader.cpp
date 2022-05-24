@@ -3,19 +3,6 @@
 
 namespace hc = httpclient;
 
-/*
-    class chunked_buffer_reader
-    {
-    private:
-        const chunked_buffer &_buffer;
-        std::list<chunked_buffer::chunk>::const_iterator _currentChunk;
-        unsigned int _chunkPosition;
-
-    public:
-        chunked_buffer_reader(const chunked_buffer &buffer);
-        void read(uint8_t *bytes, unsigned int size, unsigned int offset = 0);
-    };
-*/
 
 hc::chunked_buffer_reader::chunked_buffer_reader(const hc::chunked_buffer &buffer)
     : _buffer(buffer), _current_chunk(buffer.begin()), _chunk_position(0)

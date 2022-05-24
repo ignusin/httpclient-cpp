@@ -12,4 +12,5 @@ add_library(httpclient
     http_string_body.cpp
     http_body_conversions.cpp
     http_utility.cpp
+    http_headers.cpp
     httpclient.cpp)
