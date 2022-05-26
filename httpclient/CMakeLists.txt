@@ -10,7 +10,7 @@ add_library(httpclient
     # http_byte_body.cpp
     http_form_body.cpp
     http_string_body.cpp
-    http_body_conversions.cpp
+    http_conversions.cpp
     http_utility.cpp
     http_headers.cpp
     httpclient.cpp)

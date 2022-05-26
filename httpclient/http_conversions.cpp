@@ -1,11 +1,22 @@
 #include "chunked_buffer_reader.hpp"
-#include "http_body_conversions.hpp"
+#include "http_conversions.hpp"
 #include "http_form_body.hpp"
 #include "http_string_body.hpp"
 #include "http_utility.hpp"
 #include <sstream>
+#include <stdexcept>
 
 namespace hc = httpclient;
+
+hc::http_status_code hc::make_status_code(const hc::chunked_buffer &buffer)
+{
+    throw std::runtime_error("Not implemented yet.");
+}
+
+hc::http_headers hc::make_headers(const hc::chunked_buffer &buffer)
+{
+    throw std::runtime_error("Not implemented yet.");
+}
 
 template<>
 hc::chunked_buffer hc::make_buffer<hc::http_form_body>(const hc::http_form_body &body)

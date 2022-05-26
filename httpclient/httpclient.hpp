@@ -8,7 +8,7 @@
 #include "http_byte_body.hpp"
 #include "http_form_body.hpp"
 #include "http_string_body.hpp"
-#include "http_body_conversions.hpp"
+#include "http_conversions.hpp"
 
 #include <system_error>
 
