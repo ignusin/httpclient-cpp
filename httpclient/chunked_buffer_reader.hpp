@@ -16,6 +16,9 @@ namespace httpclient
     public:
         chunked_buffer_reader(const chunked_buffer &buffer);
         unsigned int read(std::uint8_t *bytes, unsigned int size, unsigned int offset = 0);
+
+        // TODO: bool check to see if the end of buffer was detected.
+        // TODO: method to read 1 byte.  
     };
 }
 

@@ -13,4 +13,5 @@ add_library(httpclient
     http_conversions.cpp
     http_utility.cpp
     http_headers.cpp
+    http_status_code.cpp
     httpclient.cpp)

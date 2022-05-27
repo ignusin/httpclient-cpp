@@ -14,7 +14,7 @@ namespace httpclient
         http_status_code(const unsigned int code, const std::string &text);
 
         unsigned int code() const;
-        const std::string &text() const; 
+        const std::string &text() const;
     };
 }
 

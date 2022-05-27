@@ -7,7 +7,7 @@
 #include "../chunked_buffer_reader.hpp"
 #include "../http_conversions.hpp"
 #include "../http_request.hpp"
-#include "../http_response.hpp"
+#include "../http_result.hpp"
 
 namespace httpclient
 {
@@ -53,7 +53,7 @@ namespace httpclient
         }
 
         template<typename t_req_body, typename t_resp_body>
-        http_response<t_resp_body> http_curl_perform(
+        http_result<t_resp_body> http_curl_perform(
             const http_request<t_req_body> &request)
         {
             chunked_buffer buffer = make_buffer(request.body());
@@ -75,11 +75,29 @@ namespace httpclient
             chunked_buffer response_buffer;
             __http_curl_response_read_body(handle, response_buffer);
 
-            curl_easy_perform(*handle);
+            auto curl_code = curl_easy_perform(*handle);
+            if (curl_code != CURLE_OK)
+            {
+                return http_result<t_resp_body>(curl_easy_strerror(curl_code));
+            }
 
+            auto status_code = make_status_code(header_buffer);
+            if (!status_code)
+            {
+                return http_result<t_resp_body>("Could not parse status_code.");
+            }
 
+            auto headers = make_headers(header_buffer);
+            if (!headers)
+            {
+                return http_result<t_resp_body>("Could not parse headers.");
+            }
 
-            return http_response<t_resp_body>(make_body<t_resp_body>(response_buffer));
+            return http_result<t_resp_body>(
+                http_response<t_resp_body>(
+                    std::move(status_code.value()),
+                    std::move(headers.value()),
+                    make_body<t_resp_body>(response_buffer)));
         }
     }
 }

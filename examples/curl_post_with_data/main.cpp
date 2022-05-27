@@ -19,9 +19,15 @@ int main()
         "https://httpbin.org/post",
         std::move(form_body)};
     
-    auto resp = hc::http_perform<hc::http_form_body, hc::http_string_body>(request);
-    
-    std::cout << resp.body().content() << std::endl;
+    auto result = hc::http_perform<hc::http_form_body, hc::http_string_body>(request);
+    if (result)
+    {
+        std::cout << result->body().content() << std::endl;
+    }
+    else
+    {
+        std::cout << "Error: " << result.error() << std::endl;
+    }
 
     /*
     hc::curl::httpclient_curl_handle curl;
