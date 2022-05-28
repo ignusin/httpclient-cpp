@@ -67,7 +67,7 @@ namespace httpclient
                 __http_curl_request_write_body(handle, reader);
             }
 
-            handle.setopt(CURLOPT_HEADER, 1L);
+            // handle.setopt(CURLOPT_HEADER, 1L);
 
             chunked_buffer header_buffer;
             __http_curl_response_read_header(handle, header_buffer);
@@ -88,15 +88,11 @@ namespace httpclient
             }
 
             auto headers = make_headers(header_buffer);
-            if (!headers)
-            {
-                return http_result<t_resp_body>("Could not parse headers.");
-            }
 
             return http_result<t_resp_body>(
                 http_response<t_resp_body>(
                     std::move(status_code.value()),
-                    std::move(headers.value()),
+                    std::move(headers),
                     make_body<t_resp_body>(response_buffer)));
         }
     }

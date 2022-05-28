@@ -37,12 +37,61 @@ std::optional<hc::http_status_code> hc::make_status_code(const hc::chunked_buffe
         return {};
     }
 
-    return hc::http_status_code{status_code, ""};
+    if (str[pos2] == '\n')
+    {
+        return hc::http_status_code{status_code, ""};
+    }
+
+    auto pos3 = str.find_first_of('\n', pos2 + 1);
+    if (pos3 == std::string::npos)
+    {
+        return {};
+    }
+
+    auto status_text = str.substr(pos2 + 1, pos3 - pos2 - 1);
+
+    return hc::http_status_code{status_code, status_text};
 }
 
-std::optional<hc::http_headers> hc::make_headers(const hc::chunked_buffer &buffer)
+static std::optional<std::pair<std::string, std::string>> make_single_header(
+    const std::string& header_line)
 {
-    throw std::runtime_error("Not implemented yet.");
+    auto sc_pos = header_line.find_first_of(':');
+    if (sc_pos == std::string::npos)
+    {
+        return {};
+    }
+
+    auto header_name = header_line.substr(0, sc_pos);
+    auto header_value = header_line.substr(sc_pos + 2);
+
+    return std::pair{header_name, header_value};
+}
+
+hc::http_headers hc::make_headers(const hc::chunked_buffer &buffer)
+{
+    auto str = make_string(buffer);
+
+    hc::http_headers result;
+
+    auto pos_prev = -1;
+    auto pos = str.find_first_of('\n');
+    while (pos != std::string::npos)
+    {
+        auto line = str.substr(pos_prev + 1, pos - pos_prev - 1);
+        
+        auto header = make_single_header(line);
+        if (header)
+        {
+            const auto &header_value = *header;
+            result.append(header_value.first, header_value.second);
+        }
+
+        pos_prev = pos;
+        pos = str.find_first_of('\n', pos + 1);
+    }
+
+    return result;
 }
 
 std::string hc::make_string(const hc::chunked_buffer &buffer)

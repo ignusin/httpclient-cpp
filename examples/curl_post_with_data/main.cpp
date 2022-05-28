@@ -22,6 +22,21 @@ int main()
     auto result = hc::http_perform<hc::http_form_body, hc::http_string_body>(request);
     if (result)
     {
+        std::cout << "Status code: " << result->status_code().code() << std::endl;
+        
+        std::cout << "Headers: " << std::endl;
+        for (auto key_it = result->headers().begin(); key_it != result->headers().end(); ++key_it)
+        {
+            std::cout << "\t" << std::get<0>(*key_it) << ":" << std::endl;
+            
+            const auto &values = std::get<1>(*key_it);
+            for (auto val_it = values.begin(); val_it != values.end(); ++val_it)
+            {
+                std::cout << "\t\t" << *val_it << std::endl;
+            }
+        }
+        
+        std::cout << "Body: " << std::endl;
         std::cout << result->body().content() << std::endl;
     }
     else

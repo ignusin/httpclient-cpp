@@ -25,6 +25,16 @@ namespace httpclient
         {
         }
 
+        const http_status_code &status_code() const
+        {
+            return _status_code;
+        }
+
+        const http_headers &headers() const
+        {
+            return _headers;
+        }
+
         const t_body &body() const
         {
             return _body;

@@ -12,7 +12,7 @@ namespace httpclient
 {
     std::optional<http_status_code> make_status_code(const chunked_buffer &buffer);
 
-    std::optional<http_headers> make_headers(const chunked_buffer &buffer);
+    http_headers make_headers(const chunked_buffer &buffer);
 
     std::string make_string(const chunked_buffer &buffer);
 
