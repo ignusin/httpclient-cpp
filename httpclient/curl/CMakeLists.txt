@@ -7,4 +7,5 @@ add_compile_options(-g)
 add_library(httpclient_curl
     httpclient_curl_initializer.cpp
     httpclient_curl_handle.cpp
+    httpclient_curl_slist.cpp
     httpclient_curl.cpp)

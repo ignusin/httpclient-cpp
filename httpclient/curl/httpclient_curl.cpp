@@ -20,6 +20,22 @@ size_t hc::curl::__curl_write_buffer_callback(char *ptr, size_t size, size_t nme
     return size * nmemb;
 }
 
+void hc::curl::__http_curl_request_write_headers(
+    httpclient_curl_handle &handle,
+    httpclient_curl_slist &headers_slist,
+    const http_headers &headers)
+{
+    for (auto header = headers.begin(); header != headers.end(); ++header)
+    {
+        for (auto header_value = header->second.begin(); header_value != header->second.end(); ++header_value)
+        {
+            headers_slist.append(header->first, *header_value);
+        }
+    }
+
+    handle.setopt(CURLOPT_HTTPHEADER, headers_slist.list());
+}
+
 void hc::curl::__http_curl_request_write_body(
     hc::curl::httpclient_curl_handle &handle,
     hc::chunked_buffer_reader &reader)

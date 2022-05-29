@@ -3,9 +3,11 @@
 
 #include "httpclient_curl_initializer.hpp"
 #include "httpclient_curl_handle.hpp"
+#include "httpclient_curl_slist.hpp"
 #include "../chunked_buffer.hpp"
 #include "../chunked_buffer_reader.hpp"
 #include "../http_conversions.hpp"
+#include "../http_headers.hpp"
 #include "../http_request.hpp"
 #include "../http_result.hpp"
 
@@ -16,6 +18,7 @@ namespace httpclient
         size_t __curl_read_buffer_callback(char *buffer, size_t size, size_t nitems, void *userdata);
         size_t __curl_write_buffer_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
         
+        void __http_curl_request_write_headers(httpclient_curl_handle &handle, httpclient_curl_slist &headers_slist, const http_headers &headers);
         void __http_curl_request_write_body(httpclient_curl_handle &handle, chunked_buffer_reader &reader);
         void __http_curl_response_read_header(httpclient_curl_handle &handle, chunked_buffer &buffer);
         void __http_curl_response_read_body(httpclient_curl_handle &handle, chunked_buffer &buffer);
@@ -56,18 +59,19 @@ namespace httpclient
         http_result<t_resp_body> http_curl_perform(
             const http_request<t_req_body> &request)
         {
-            chunked_buffer buffer = make_buffer(request.body());
-            chunked_buffer_reader reader(buffer);
+            chunked_buffer body_buffer = make_buffer(request.body());
+            chunked_buffer_reader body_buffer_reader{body_buffer};
 
             httpclient_curl_handle handle;
             __http_curl_request_prepare(handle, request);
+            
+            httpclient_curl_slist headers_slist;
+            __http_curl_request_write_headers(handle, headers_slist, request.headers());
 
             if (request.verb() == http_post)
             {
-                __http_curl_request_write_body(handle, reader);
+                __http_curl_request_write_body(handle, body_buffer_reader);
             }
-
-            // handle.setopt(CURLOPT_HEADER, 1L);
 
             chunked_buffer header_buffer;
             __http_curl_response_read_header(handle, header_buffer);
