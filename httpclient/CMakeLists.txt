@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.8)
 
 project(httpclient)
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/curl httpclient_curl)
+
 add_compile_options(-g)
 
 add_library(httpclient

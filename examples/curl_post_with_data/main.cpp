@@ -2,7 +2,6 @@
 #include <httpclient/curl/httpclient_curl.hpp>
 
 #include <iostream>
-#include <system_error>
 
 namespace hc = httpclient;
 
