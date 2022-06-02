@@ -5,7 +5,7 @@
 
 #include "http_request.hpp"
 #include "http_result.hpp"
-#include "http_byte_body.hpp"
+#include "http_empty_body.hpp"
 #include "http_form_body.hpp"
 #include "http_string_body.hpp"
 #include "http_conversions.hpp"

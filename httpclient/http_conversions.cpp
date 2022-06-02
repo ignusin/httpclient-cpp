@@ -1,5 +1,6 @@
 #include "chunked_buffer_reader.hpp"
 #include "http_conversions.hpp"
+#include "http_empty_body.hpp"
 #include "http_form_body.hpp"
 #include "http_string_body.hpp"
 #include "http_utility.hpp"
@@ -110,6 +111,12 @@ std::string hc::make_string(const hc::chunked_buffer &buffer)
     }
 
     return str;
+}
+
+template<>
+hc::chunked_buffer hc::make_buffer<hc::http_empty_body>(const hc::http_empty_body &body)
+{
+    return {};
 }
 
 template<>

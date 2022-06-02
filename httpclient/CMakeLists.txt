@@ -17,3 +17,5 @@ add_library(httpclient
     http_headers.cpp
     http_status_code.cpp
     httpclient.cpp)
+
+target_compile_features(httpclient PUBLIC cxx_std_14)
